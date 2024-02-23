@@ -36,9 +36,14 @@ jobs:
           export PATH="$PATH":"$HOME/.pub-cache/bin":".flutter/bin/"
           flutter_to_debian
 
+      # - name: upload result
+      #   uses: ncipollo/release-action@v1.12.0
+      #   with:
+      #     artifacts: > 
+      #       build/linux/x64/release/debian/,
+      #     token: ${{ secrets.RELEASE_TOKEN }}
       - name: upload result
-        uses: ncipollo/release-action@v1.12.0
+        uses: actions/upload-artifact@v1
         with:
-          artifacts: > 
-            build/linux/x64/release/debian/,
-          token: ${{ secrets.RELEASE_TOKEN }}
+          name: Traintime_PDA_Ubuntu
+          path: ${{ github.workspace }}/build/linux/x64/release/debian/
