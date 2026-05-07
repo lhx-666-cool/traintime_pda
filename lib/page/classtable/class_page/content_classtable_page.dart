@@ -50,7 +50,7 @@ class _ContentClassTablePageState extends State<ContentClassTablePage> {
 
   late BoxDecoration decoration;
   late ClassTableWidgetState classTableState;
-  ClassTableWidgetState? _attachedClassTableState;
+  bool _isListening = false;
   bool _didLoadVisualSettings = false;
 
   void _switchPage() {
@@ -78,27 +78,23 @@ class _ContentClassTablePageState extends State<ContentClassTablePage> {
 
   @override
   void dispose() {
-    _attachedClassTableState?.removeListener(_switchPage);
+    classTableState.removeListener(_switchPage);
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
-    final nextClassTableState = ClassTableState.of(context)!.controllers;
-
     if (!_didLoadVisualSettings) {
       CurrentTimeIndicatorConfig.loadFromPreference();
       CompletedClassStyleConfig.loadFromPreference();
       _didLoadVisualSettings = true;
     }
 
-    if (_attachedClassTableState != nextClassTableState) {
-      _attachedClassTableState?.removeListener(_switchPage);
-      _attachedClassTableState = nextClassTableState;
-      _attachedClassTableState!.addListener(_switchPage);
+    if (!_isListening) {
+      classTableState = ClassTableState.of(context)!.controllers;
+      classTableState.addListener(_switchPage);
+      _isListening = true;
     }
-
-    classTableState = nextClassTableState;
 
     pageControl = PageController(
       initialPage: classTableState.chosenWeek,
